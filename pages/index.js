@@ -13,7 +13,7 @@ export default function Home() {
 
       <main className={styles.main}>
  
-        <section className=' bg'> </section>
+        <section className=' bg-slate-600'> </section>
         <h1 className={styles.title}>
           Welcome to <a href="https://nextjs.org">Next.js!</a>
         </h1>
