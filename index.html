@@ -7,14 +7,14 @@
       window.OneSignal = window.OneSignal || [];
       OneSignal.push(function () {
         OneSignal.init({
-          appId: "5930e0bd-4196-4ca1-9e93-bacc6d4c4a73",
+          appId: "5930e0bd-4196-4ca1-9e93-bacc6d4c4a73", // ← Replace this with your real OneSignal App ID
           allowLocalhostAsSecureOrigin: true, 
           notifyButton: {
             enable: true,
           },
         });
 
-       OneSignal.isPushNotificationsEnabled().then(function (isEnabled) {
+        OneSignal.isPushNotificationsEnabled().then(function (isEnabled) {
           console.log("Push notifications enabled:", isEnabled);
         });
 
