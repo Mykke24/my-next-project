@@ -1,36 +1,50 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>OneSignal Web Push Test</title>
-    <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-    <script>
-      window.OneSignal = window.OneSignal || [];
-      OneSignal.push(function () {
-        OneSignal.init({
-          appId: "5930e0bd-4196-4ca1-9e93-bacc6d4c4a73", // ← Replace this with your real OneSignal App ID
-          allowLocalhostAsSecureOrigin: true, 
-          notifyButton: {
-            enable: true,
-          },
-        });
+<head>
+  <title>Copy App ID</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 2rem;
+    }
+    .copy-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    input {
+      font-family: monospace;
+      padding: 0.5rem;
+      width: 350px;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
 
-        OneSignal.isPushNotificationsEnabled().then(function (isEnabled) {
-          console.log("Push notifications enabled:", isEnabled);
-        });
+  <h2>OneSignal App ID</h2>
+  <div class="copy-container">
+    <input type="text" id="appIdField" value="5930e0bd-4196-4ca1-9e93-bacc6d4c4a73" readonly />
+    <button onclick="copyAppId()">Copy</button>
+  </div>
+  <p id="copiedMsg" style="color: green; display: none;">Copied!</p>
 
-        OneSignal.getUserId().then(function (userId) {
-          if (userId) {
-            console.log("User ID:", userId);
-            alert("Your Player ID:\n" + userId);
-          } else {
-            alert("User not yet subscribed or no Player ID available.");
-          }
-        });
-      });
-    </script>
-  </head>
-  <body>
-    <h2>Web Push Test</h2>
-    <p>Allow notifications when prompted.</p>
-  </body>
+  <script>
+    function copyAppId() {
+      const input = document.getElementById("appIdField");
+      input.select();
+      input.setSelectionRange(0, 99999); // for mobile support
+      document.execCommand("copy");
+
+      // show feedback
+      const msg = document.getElementById("copiedMsg");
+      msg.style.display = "inline";
+      setTimeout(() => msg.style.display = "none", 1500);
+    }
+  </script>
+
+</body>
 </html>
