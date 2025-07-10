@@ -33,6 +33,12 @@
     }
   });
 
+    OneSignal.getUserId().then(function(userId) {
+  console.log("Android Player ID:", userId);
+  alert("Deine Player ID: " + userId);
+});
+
+
   // Initial prüfen, ob schon aktiviert
   OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
     console.log("isPushNotificationsEnabled:", isEnabled);
