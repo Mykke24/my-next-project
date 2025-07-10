@@ -1,50 +1,54 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-  <title>Copy App ID</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      padding: 2rem;
-    }
-    .copy-container {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    input {
-      font-family: monospace;
-      padding: 0.5rem;
-      width: 350px;
-    }
-    button {
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-    }
-  </style>
+<meta charset="UTF-8" />
+<title>OneSignal Player ID anzeigen</title>
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
 </head>
 <body>
 
-  <h2>OneSignal App ID</h2>
-  <div class="copy-container">
-    <input type="text" id="appIdField" value="5930e0bd-4196-4ca1-9e93-bacc6d4c4a73" readonly />
-    <button onclick="copyAppId()">Copy</button>
-  </div>
-  <p id="copiedMsg" style="color: green; display: none;">Copied!</p>
+<h2>Deine OneSignal Player ID:</h2>
+<input type="text" id="playerIdInput" style="width: 400px;" readonly />
+<button onclick="copyPlayerId()">Kopieren</button>
+<p id="status"></p>
 
-  <script>
-    function copyAppId() {
-      const input = document.getElementById("appIdField");
-      input.select();
-      input.setSelectionRange(0, 99999); // for mobile support
-      document.execCommand("copy");
+<script>
+  window.OneSignal = window.OneSignal || [];
+  OneSignal.push(function() {
+    OneSignal.init({
+      appId: "5930e0bd-4196-4ca1-9e93-bacc6d4c4a73", // Hier deine App-ID eintragen
+      notifyButton: { enable: true }
+    });
 
-      // show feedback
-      const msg = document.getElementById("copiedMsg");
-      msg.style.display = "inline";
-      setTimeout(() => msg.style.display = "none", 1500);
+    OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
+      if (isEnabled) {
+        OneSignal.getUserId().then(function(userId) {
+          if (userId) {
+            document.getElementById("playerIdInput").value = userId;
+            document.getElementById("status").innerText = "Push-Benachrichtigungen aktiviert.";
+          } else {
+            document.getElementById("status").innerText = "Player ID konnte nicht abgerufen werden.";
+          }
+        });
+      } else {
+        document.getElementById("status").innerText = "Bitte aktivieren Sie Push-Benachrichtigungen.";
+      }
+    });
+  });
+
+  function copyPlayerId() {
+    const input = document.getElementById("playerIdInput");
+    input.select();
+    input.setSelectionRange(0, 99999); // Für Mobilgeräte
+
+    try {
+      document.execCommand('copy');
+      alert("Player ID kopiert!");
+    } catch (err) {
+      alert("Kopieren fehlgeschlagen, bitte manuell kopieren.");
     }
-  </script>
+  }
+</script>
 
 </body>
 </html>
