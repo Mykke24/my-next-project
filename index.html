@@ -15,26 +15,41 @@
 <script>
   window.OneSignal = window.OneSignal || [];
   OneSignal.push(function() {
-    OneSignal.init({
-      appId: "5930e0bd-4196-4ca1-9e93-bacc6d4c4a73", // Hier deine App-ID eintragen
-      notifyButton: { enable: true }
-    });
-
-    OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
-      if (isEnabled) {
-        OneSignal.getUserId().then(function(userId) {
-          if (userId) {
-            document.getElementById("playerIdInput").value = userId;
-            document.getElementById("status").innerText = "Push-Benachrichtigungen aktiviert.";
-          } else {
-            document.getElementById("status").innerText = "Player ID konnte nicht abgerufen werden.";
-          }
-        });
-      } else {
-        document.getElementById("status").innerText = "Bitte aktivieren Sie Push-Benachrichtigungen.";
-      }
-    });
+  OneSignal.init({
+    appId: "5930e0bd-4196-4ca1-9e93-bacc6d4c4a73"
   });
+
+  // Event abfangen, wenn sich der Abonnement-Status ändert
+  OneSignal.on('subscriptionChange', function(isSubscribed) {
+    console.log("subscriptionChange: ", isSubscribed);
+    if (isSubscribed) {
+      OneSignal.getUserId().then(function(userId) {
+        console.log("Player ID (subscriptionChange): ", userId);
+        if (userId) {
+          document.getElementById("playerIdInput").value = userId;
+          document.getElementById("status").innerText = "Push-Benachrichtigungen aktiviert.";
+        }
+      });
+    }
+  });
+
+  // Initial prüfen, ob schon aktiviert
+  OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
+    console.log("isPushNotificationsEnabled:", isEnabled);
+    if (isEnabled) {
+      OneSignal.getUserId().then(function(userId) {
+        console.log("Player ID (initial): ", userId);
+        if (userId) {
+          document.getElementById("playerIdInput").value = userId;
+          document.getElementById("status").innerText = "Push-Benachrichtigungen aktiviert.";
+        }
+      });
+    } else {
+      document.getElementById("status").innerText = "Bitte aktivieren Sie Push-Benachrichtigungen.";
+    }
+  });
+});
+
 
   function copyPlayerId() {
     const input = document.getElementById("playerIdInput");
