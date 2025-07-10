@@ -13,7 +13,19 @@
             enable: true,
           },
         });
-      });
+
+       OneSignal.isPushNotificationsEnabled().then(function (isEnabled) {
+          console.log("Push notifications enabled:", isEnabled);
+        });
+
+        OneSignal.getUserId().then(function (userId) {
+          if (userId) {
+            console.log("User ID:", userId);
+            alert("Your Player ID:\n" + userId);
+          } else {
+            alert("User not yet subscribed or no Player ID available.");
+          }
+        });
     </script>
   </head>
   <body>
