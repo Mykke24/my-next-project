@@ -3,65 +3,73 @@
 <head>
 <meta charset="UTF-8" />
 <title>OneSignal Player ID anzeigen</title>
-<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async=""></script>
+<script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
 </head>
 <body>
 
-<h2>Deine OneSignal Player ID3:</h2>
+<h2>Deine OneSignal Player ID4:</h2>
 <input type="text" id="playerIdInput" style="width: 400px;" readonly />
 <button onclick="copyPlayerId()">Kopieren</button>
+<br><br>
+<button id="registerBtn">Push-Benachrichtigungen aktivieren</button>
 <p id="status"></p>
 
 <script>
   window.OneSignal = window.OneSignal || [];
+  
   OneSignal.push(function() {
-  OneSignal.init({
-    appId: "5930e0bd-4196-4ca1-9e93-bacc6d4c4a73"
+    OneSignal.init({
+      appId: "5930e0bd-4196-4ca1-9e93-bacc6d4c4a73" // hier deine App ID eintragen
+    });
+
+    // Wenn User sich abonniert/abonniert hat
+    OneSignal.on('subscriptionChange', function(isSubscribed) {
+      console.log("subscriptionChange: ", isSubscribed);
+      if (isSubscribed) {
+        OneSignal.getUserId().then(function(userId) {
+          if (userId) {
+            document.getElementById("playerIdInput").value = userId;
+            document.getElementById("status").innerText = "Push-Benachrichtigungen aktiviert.";
+          }
+        });
+      }
+    });
+
+    // Prüfe initial, ob bereits aktiviert
+    OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
+      if (isEnabled) {
+        OneSignal.getUserId().then(function(userId) {
+          if (userId) {
+            document.getElementById("playerIdInput").value = userId;
+            document.getElementById("status").innerText = "Push-Benachrichtigungen aktiviert.";
+            document.getElementById("registerBtn").style.display = "none"; // Button ausblenden, weil schon registriert
+          }
+        });
+      } else {
+        document.getElementById("status").innerText = "Bitte aktivieren Sie Push-Benachrichtigungen.";
+      }
+    });
   });
 
-  // Event abfangen, wenn sich der Abonnement-Status ändert
-  OneSignal.on('subscriptionChange', function(isSubscribed) {
-    console.log("subscriptionChange: ", isSubscribed);
-    if (isSubscribed) {
-      OneSignal.getUserId().then(function(userId) {
-        console.log("Player ID (subscriptionChange): ", userId);
-        if (userId) {
-          document.getElementById("playerIdInput").value = userId;
-          document.getElementById("status").innerText = "Push-Benachrichtigungen aktiviert.";
-        }
-      });
-    }
+  // Manuell Registrierung starten
+  document.getElementById("registerBtn").addEventListener("click", function() {
+    OneSignal.push(function() {
+      OneSignal.registerForPushNotifications()
+        .then(() => {
+          console.log("Registrierung initiiert");
+          document.getElementById("status").innerText = "Bitte Push-Benachrichtigungen in deinem Browser erlauben.";
+        })
+        .catch(() => {
+          document.getElementById("status").innerText = "Registrierung abgebrochen oder fehlgeschlagen.";
+        });
+    });
   });
 
-    OneSignal.getUserId().then(function(userId) {
-  console.log("Android Player ID:", userId);
-  alert("Deine Player ID: " + userId);
-});
-
-
-  // Initial prüfen, ob schon aktiviert
-  OneSignal.isPushNotificationsEnabled().then(function(isEnabled) {
-    console.log("isPushNotificationsEnabled:", isEnabled);
-    if (isEnabled) {
-      OneSignal.getUserId().then(function(userId) {
-        console.log("Player ID (initial): ", userId);
-        if (userId) {
-          document.getElementById("playerIdInput").value = userId;
-          document.getElementById("status").innerText = "Push-Benachrichtigungen aktiviert.";
-        }
-      });
-    } else {
-      document.getElementById("status").innerText = "Bitte aktivieren Sie Push-Benachrichtigungen.";
-    }
-  });
-});
-
-
+  // Player ID kopieren
   function copyPlayerId() {
     const input = document.getElementById("playerIdInput");
     input.select();
     input.setSelectionRange(0, 99999); // Für Mobilgeräte
-
     try {
       document.execCommand('copy');
       alert("Player ID kopiert!");
